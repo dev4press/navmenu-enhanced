@@ -4,6 +4,7 @@
 
 ### Version: 1.1 / January 10 2024
 
+* **new** customizer support
 * **new** bbPress profile link item
 * **new** first public release
 

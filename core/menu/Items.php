@@ -28,6 +28,97 @@ class Items {
 	private function run() {
 		add_action( 'admin_init', array( $this, 'register_metaboxes' ) );
 		add_filter( 'wp_get_nav_menu_items', array( $this, 'items_processing' ), 10, 3 );
+		add_filter( 'customize_nav_menu_available_item_types', array( $this, 'customizer_types' ) );
+		add_filter( 'customize_nav_menu_available_items', array( $this, 'customizer_items' ), 10, 4 );
+	}
+
+	private function menu_items( $customizer = false ) : array {
+		$list  = array();
+		$items = array(
+			array(
+				'group' => 'access',
+				'name'  => 'navxtra-login',
+				'title' => __( 'Login', 'navmenu-enhanced' ),
+				'xfn'   => 'noindex nofollow',
+				'url'   => wp_login_url(),
+			),
+			array(
+				'group' => 'access',
+				'name'  => 'navxtra-login-back',
+				'title' => __( 'Login with Redirect Back', 'navmenu-enhanced' ),
+				'xfn'   => 'noindex nofollow',
+				'url'   => wp_login_url(),
+			),
+			array(
+				'group' => 'access',
+				'name'  => 'navxtra-logout',
+				'title' => __( 'Logout', 'navmenu-enhanced' ),
+				'xfn'   => 'noindex nofollow',
+				'url'   => wp_logout_url(),
+			),
+			array(
+				'group' => 'access',
+				'name'  => 'navxtra-logout-back',
+				'title' => __( 'Logout with Redirect Back', 'navmenu-enhanced' ),
+				'xfn'   => 'noindex nofollow',
+				'url'   => wp_logout_url(),
+			),
+			array(
+				'group' => 'access',
+				'name'  => 'navxtra-register',
+				'title' => __( 'Register', 'navmenu-enhanced' ),
+				'xfn'   => 'noindex nofollow',
+				'url'   => wp_registration_url(),
+			),
+		);
+
+		if ( Helper::is_bbpress_active() ) {
+			$items[] = array(
+				'group' => 'bbpress',
+				'name'  => 'navxtra-bbpress-profile',
+				'title' => __( 'bbPress Profile', 'navmenu-enhanced' ),
+				'url'   => site_url(),
+			);
+		}
+
+		if ( $customizer ) {
+			foreach ( $items as $el ) {
+				$item = array(
+					'id'         => 'navmenu-extra-' . $el['name'],
+					'type'       => $el['name'],
+					'title'      => $el['title'],
+					'type_label' => __( 'Dynamic' ),
+					'object'     => 'navmenu-extra',
+					'object_id'  => $el['name'],
+					'url'        => $el['url'] ?? site_url(),
+					'xfn'        => $el['xfn'] ?? '',
+				);
+
+				$list[] = $item;
+			}
+		} else {
+			foreach ( $items as $el ) {
+				$item = array(
+					'id'               => 'navmenu-extra-' . $el['name'],
+					'classes'          => array(),
+					'type'             => $el['name'],
+					'type_label'       => __( 'Dynamic' ),
+					'object_id'        => $el['name'],
+					'title'            => $el['title'],
+					'object'           => 'navmenu-extra',
+					'menu_item_parent' => null,
+					'url'              => null,
+					'xfn'              => $el['xfn'] ?? '',
+					'db_id'            => null,
+					'target'           => null,
+					'attr_title'       => null,
+				);
+
+				$list[ $el['group'] ][ $el['name'] ] = (object) $item;
+			}
+		}
+
+		return $list;
 	}
 
 	public function items_processing( $items, $menu, $args ) {
@@ -75,67 +166,7 @@ class Items {
 	}
 
 	public function add_items_more() {
-		$list  = array();
-		$items = array(
-			array(
-				'group' => 'access',
-				'name'  => 'navxtra-login',
-				'title' => __( 'Login', 'navmenu-enhanced' ),
-				'xfn'   => 'noindex nofollow',
-			),
-			array(
-				'group' => 'access',
-				'name'  => 'navxtra-login-back',
-				'title' => __( 'Login with Redirect Back', 'navmenu-enhanced' ),
-				'xfn'   => 'noindex nofollow',
-			),
-			array(
-				'group' => 'access',
-				'name'  => 'navxtra-logout',
-				'title' => __( 'Logout', 'navmenu-enhanced' ),
-				'xfn'   => 'noindex nofollow',
-			),
-			array(
-				'group' => 'access',
-				'name'  => 'navxtra-logout-back',
-				'title' => __( 'Logout with Redirect Back', 'navmenu-enhanced' ),
-				'xfn'   => 'noindex nofollow',
-			),
-			array(
-				'group' => 'access',
-				'name'  => 'navxtra-register',
-				'title' => __( 'Register', 'navmenu-enhanced' ),
-				'xfn'   => 'noindex nofollow',
-			),
-		);
-
-		if ( Helper::is_bbpress_active() ) {
-			$items[] = array(
-				'group' => 'bbpress',
-				'name'  => 'navxtra-bbpress-profile',
-				'title' => __( 'bbPress Profile', 'navmenu-enhanced' ),
-				'xfn'   => '',
-			);
-		}
-
-		foreach ( $items as $el ) {
-			$item = new stdClass();
-
-			$item->classes   = array();
-			$item->type      = $el['name'];
-			$item->object_id = $el['name'];
-			$item->title     = $el['title'];
-			$item->object    = 'navmenu-extra';
-
-			$item->menu_item_parent = null;
-			$item->url              = null;
-			$item->xfn              = $el['xfn'];
-			$item->db_id            = null;
-			$item->target           = null;
-			$item->attr_title       = null;
-
-			$list[ $el['group'] ][ $el['name'] ] = $item;
-		}
+		$list = $this->menu_items();
 
 		$walker = new Walker_Nav_Menu_Checklist( array() );
 
@@ -181,5 +212,28 @@ class Items {
         </p>
 
 		<?php
+	}
+
+	public function customizer_types( $item_types ) {
+		$item_types[] = array(
+			'title'      => __( 'Additional Items', 'navmenu-enhanced' ),
+			'type_label' => __( 'Additional Items', 'navmenu-enhanced' ),
+			'type'       => 'navmenu-enhanced',
+			'object'     => 'navmenu-enhanced',
+		);
+
+		return $item_types;
+	}
+
+	public function customizer_items( $items, $object_type, $object_name, $page ) {
+		if ( $object_type == 'navmenu-enhanced' ) {
+			if ( $page > 1 ) {
+				return $items;
+			}
+
+			return $this->menu_items( true );
+		}
+
+		return $items;
 	}
 }
