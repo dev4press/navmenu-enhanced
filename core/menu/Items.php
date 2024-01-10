@@ -2,6 +2,7 @@
 
 namespace Dev4Press\Plugin\NavMenuEnhanced\Menu;
 
+use Dev4Press\Plugin\NavMenuEnhanced\Basic\Helper;
 use stdClass;
 use Walker_Nav_Menu_Checklist;
 
@@ -40,14 +41,25 @@ class Items {
 						$item->url = wp_logout_url();
 						break;
 					case 'navxtra-login-back':
-						$item->url = wp_login_url( $this->current_url_request() );
+						$item->url = wp_login_url( Helper::current_url() );
 						break;
 					case 'navxtra-logout-back':
-						$item->url = wp_logout_url( $this->current_url_request() );
+						$item->url = wp_logout_url( Helper::current_url() );
 						break;
 					case 'navxtra-register':
 						$item->url = wp_registration_url();
 						break;
+					case 'navxtra-bbpress-profile':
+						if ( is_user_logged_in() ) {
+							if ( Helper::is_bbpress_active() ) {
+								$item->url = bbp_get_user_profile_url( bbp_get_current_user_id() );
+							} else {
+								$item->url = site_url();
+							}
+						} else {
+							$item->url = wp_login_url( Helper::current_url() );
+							$item->xfn = 'noindex nofollow';
+						}
 				}
 			}
 		}
@@ -68,29 +80,43 @@ class Items {
 			array(
 				'group' => 'access',
 				'name'  => 'navxtra-login',
-				'title' => __( "Login", "gd-bbpress-toolbox" )
+				'title' => __( "Login", "gd-bbpress-toolbox" ),
+				'xfn'   => 'noindex nofollow'
 			),
 			array(
 				'group' => 'access',
 				'name'  => 'navxtra-login-back',
-				'title' => __( "Login with Redirect Back", "gd-bbpress-toolbox" )
+				'title' => __( "Login with Redirect Back", "gd-bbpress-toolbox" ),
+				'xfn'   => 'noindex nofollow'
 			),
 			array(
 				'group' => 'access',
 				'name'  => 'navxtra-logout',
-				'title' => __( "Logout", "gd-bbpress-toolbox" )
+				'title' => __( "Logout", "gd-bbpress-toolbox" ),
+				'xfn'   => 'noindex nofollow'
 			),
 			array(
 				'group' => 'access',
 				'name'  => 'navxtra-logout-back',
-				'title' => __( "Logout with Redirect Back", "gd-bbpress-toolbox" )
+				'title' => __( "Logout with Redirect Back", "gd-bbpress-toolbox" ),
+				'xfn'   => 'noindex nofollow'
 			),
 			array(
 				'group' => 'access',
 				'name'  => 'navxtra-register',
-				'title' => __( "Register", "gd-bbpress-toolbox" )
-			)
+				'title' => __( "Register", "gd-bbpress-toolbox" ),
+				'xfn'   => 'noindex nofollow'
+			),
 		);
+
+		if ( Helper::is_bbpress_active() ) {
+			$items[] = array(
+				'group' => 'access',
+				'name'  => 'navxtra-bbpress-profile',
+				'title' => __( "bbPress Profile", "gd-bbpress-toolbox" ),
+				'xfn'   => ''
+			);
+		}
 
 		foreach ( $items as $el ) {
 			$item = new stdClass();
@@ -103,7 +129,7 @@ class Items {
 
 			$item->menu_item_parent = null;
 			$item->url              = null;
-			$item->xfn              = null;
+			$item->xfn              = $el['xfn'];
 			$item->db_id            = null;
 			$item->target           = null;
 			$item->attr_title       = null;
@@ -138,31 +164,5 @@ class Items {
         </p>
 
 		<?php
-	}
-
-	private function current_url_request() : string {
-		$path_info = $_SERVER['PATH_INFO'] ?? '';
-		list( $path_info ) = explode( '?', $path_info );
-		$path_info = str_replace( '%', '%25', $path_info );
-
-		$request         = explode( '?', $_SERVER['REQUEST_URI'] );
-		$req_uri         = $request[0];
-		$req_query       = $request[1] ?? false;
-		$home_path       = parse_url( home_url(), PHP_URL_PATH );
-		$home_path       = $home_path ? trim( $home_path, '/' ) : '';
-		$home_path_regex = sprintf( '|^%s|i', preg_quote( $home_path, '|' ) );
-
-		$req_uri = str_replace( $path_info, '', $req_uri );
-		$req_uri = ltrim( $req_uri, '/' );
-		$req_uri = preg_replace( $home_path_regex, '', $req_uri );
-		$req_uri = ltrim( $req_uri, '/' );
-
-		$url_request = $req_uri;
-
-		if ( $req_query !== false ) {
-			$url_request .= '?' . $req_query;
-		}
-
-		return home_url( $url_request );
 	}
 }
