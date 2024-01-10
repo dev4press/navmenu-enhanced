@@ -1,0 +1,52 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Plural - Forms: nplurals = INTEGER; plural = EXPRESSION;\n"
+"Project-Id-Version: NavMenu Enhanced\n"
+"POT-Creation-Date: 01/10/2024 10:45:12 AM\n"
+"Language-Team: Milan Petrovic <support@dev4press.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: GD i18n 2.8; www.dev4press.com\n"
+
+#: core/menu/Items.php:147
+msgid "Account"
+msgstr ""
+
+#: core/menu/Items.php:151
+msgid "bbPress"
+msgstr ""
+
+#: core/menu/Items.php:178
+msgid "Add to Menu"
+msgstr ""
+
+#: core/menu/Items.php:71
+msgid "Additional Items"
+msgstr ""
+
+#: core/menu/Items.php:83
+msgid "Login"
+msgstr ""
+
+#: core/menu/Items.php:89
+msgid "Login with Redirect Back"
+msgstr ""
+
+#: core/menu/Items.php:95
+msgid "Logout"
+msgstr ""
+
+#: core/menu/Items.php:101
+msgid "Logout with Redirect Back"
+msgstr ""
+
+#: core/menu/Items.php:107
+msgid "Register"
+msgstr ""
+
+#: core/menu/Items.php:116
+msgid "bbPress Profile"
+msgstr ""
+

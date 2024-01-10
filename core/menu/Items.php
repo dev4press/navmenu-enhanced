@@ -68,9 +68,9 @@ class Items {
 	}
 
 	public function register_metaboxes() {
-		add_meta_box( 'navmenu-items-more', __( "Additional Items", "gd-bbpress-toolbox" ), array(
+		add_meta_box( 'navmenu-items-more', __( 'Additional Items', 'navmenu-enhanced' ), array(
 			$this,
-			'add_items_more'
+			'add_items_more',
 		), 'nav-menus', 'side' );
 	}
 
@@ -80,41 +80,41 @@ class Items {
 			array(
 				'group' => 'access',
 				'name'  => 'navxtra-login',
-				'title' => __( "Login", "gd-bbpress-toolbox" ),
-				'xfn'   => 'noindex nofollow'
+				'title' => __( 'Login', 'navmenu-enhanced' ),
+				'xfn'   => 'noindex nofollow',
 			),
 			array(
 				'group' => 'access',
 				'name'  => 'navxtra-login-back',
-				'title' => __( "Login with Redirect Back", "gd-bbpress-toolbox" ),
-				'xfn'   => 'noindex nofollow'
+				'title' => __( 'Login with Redirect Back', 'navmenu-enhanced' ),
+				'xfn'   => 'noindex nofollow',
 			),
 			array(
 				'group' => 'access',
 				'name'  => 'navxtra-logout',
-				'title' => __( "Logout", "gd-bbpress-toolbox" ),
-				'xfn'   => 'noindex nofollow'
+				'title' => __( 'Logout', 'navmenu-enhanced' ),
+				'xfn'   => 'noindex nofollow',
 			),
 			array(
 				'group' => 'access',
 				'name'  => 'navxtra-logout-back',
-				'title' => __( "Logout with Redirect Back", "gd-bbpress-toolbox" ),
-				'xfn'   => 'noindex nofollow'
+				'title' => __( 'Logout with Redirect Back', 'navmenu-enhanced' ),
+				'xfn'   => 'noindex nofollow',
 			),
 			array(
 				'group' => 'access',
 				'name'  => 'navxtra-register',
-				'title' => __( "Register", "gd-bbpress-toolbox" ),
-				'xfn'   => 'noindex nofollow'
+				'title' => __( 'Register', 'navmenu-enhanced' ),
+				'xfn'   => 'noindex nofollow',
 			),
 		);
 
 		if ( Helper::is_bbpress_active() ) {
 			$items[] = array(
-				'group' => 'access',
+				'group' => 'bbpress',
 				'name'  => 'navxtra-bbpress-profile',
-				'title' => __( "bbPress Profile", "gd-bbpress-toolbox" ),
-				'xfn'   => ''
+				'title' => __( 'bbPress Profile', 'navmenu-enhanced' ),
+				'xfn'   => '',
 			);
 		}
 
@@ -143,10 +143,16 @@ class Items {
 
         <div id="navmenu-extras" class="posttypediv">
             <ul class="taxonomy-tabs add-menu-item-tabs" id="taxonomy-category-tabs">
-                <li class="tabs"><?php _e( "Extra Pages", "gd-bbpress-toolbox" ); ?></li>
+                <li class="tabs">
+                    <a href="#tabs-panel-navmenu-enhanced-access" class="nav-tab-link" data-type="tabs-panel-navmenu-enhanced-access"><?php _e( 'Account', 'navmenu-enhanced' ); ?></a>
+                </li>
+				<?php if ( ! empty( $list['bbpress'] ) ) { ?>
+                    <li>
+                        <a href="#tabs-panel-navmenu-enhanced-bbpress" class="nav-tab-link" data-type="tabs-panel-navmenu-enhanced-bbpress"><?php _e( 'bbPress', 'navmenu-enhanced' ); ?></a>
+                    </li>
+				<?php } ?>
             </ul>
-            <div id="tabs-panel-navmenu-extras" class="tabs-panel tabs-panel-active">
-                <h4><?php _e( "Account Access", "gd-bbpress-toolbox" ); ?></h4>
+            <div id="tabs-panel-navmenu-enhanced-access" class="tabs-panel tabs-panel-active">
                 <ul id="navmenu-extras-checklist-access" class="categorychecklist form-no-clear">
 					<?php
 
@@ -155,10 +161,21 @@ class Items {
 					?>
                 </ul>
             </div>
+			<?php if ( ! empty( $list['bbpress'] ) ) { ?>
+                <div id="tabs-panel-navmenu-enhanced-bbpress" class="tabs-panel tabs-panel-inactive">
+                    <ul id="navmenu-extras-checklist-bbpress" class="categorychecklist form-no-clear">
+						<?php
+
+						echo walk_nav_menu_tree( array_map( 'wp_setup_nav_menu_item', $list['bbpress'] ), 0, (object) array( 'walker' => $walker ) );
+
+						?>
+                    </ul>
+                </div>
+			<?php } ?>
         </div>
-        <p class="button-controls">
-		    <span class="add-to-menu">
-		        <input type="submit" class="button-secondary submit-add-to-menu" value="<?php esc_attr_e( "Add to Menu", "gd-bbpress-toolbox" ); ?>" name="add-navmenu-extras-menu-item" id="submit-navmenu-extras"/>
+        <p class="button-controls wp-clearfix">
+            <span class="add-to-menu">
+		        <input type="submit" class="button submit-add-to-menu right" value="<?php esc_attr_e( 'Add to Menu', 'navmenu-enhanced' ); ?>" name="add-navmenu-extras-menu-item" id="submit-navmenu-extras"/>
 		        <span class="spinner"></span>
 		    </span>
         </p>
