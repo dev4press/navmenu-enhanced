@@ -2,7 +2,7 @@
 
 /**
  * Plugin Name:       NavMenu Enhanced
- * Plugin URI:        https://plugins.dev4press.com/navmenu-enhanced/
+ * Plugin URI:        https://github.com/dev4press/navmenu-enhanced/
  * Description:       Add new menu items to the WordPress Navigation Menus interface for login, logout, registration, and more (with or without a current URL redirect).
  * Author:            Milan Petrovic
  * Author URI:        https://www.dev4press.com/
